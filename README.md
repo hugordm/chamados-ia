@@ -2,6 +2,12 @@
 
 Sistema de abertura e acompanhamento de chamados de suporte técnico interno, com IA analisando cada chamado desde a abertura.
 
+## 🔗 Acesse online
+
+- **Aplicação**: [chamados-ia.onrender.com](https://chamados-ia.onrender.com)
+- **Documentação da API (Swagger)**: [chamados-ia.onrender.com/docs/](https://chamados-ia.onrender.com/docs/)
+- **Repositório**: [github.com/hugordm/chamados-ia](https://github.com/hugordm/chamados-ia)
+
 ## Contexto
 
 É um projeto de portfólio/estudo que simula um service desk de TI real. Funcionários (papel `cliente`) abrem chamados descrevendo um problema; o time de TI (papel `agente`) acompanha, prioriza e resolve. A IA entra logo na abertura, sugerindo categoria, prioridade e uma primeira solução, e busca artigos relacionados na web para agilizar o atendimento.
@@ -52,7 +58,7 @@ docker compose up -d   # ou "docker-compose up -d" em versões mais antigas do D
 ```
 
 - Aplicação: [http://localhost:8080](http://localhost:8080)
-- Swagger UI: [http://localhost:8081](http://localhost:8081)
+- Swagger UI: [http://localhost:8081](http://localhost:8081) — localmente roda como container separado (`swagger-ui`, só no `docker-compose.yml`); em produção (onde não existe esse segundo serviço) a mesma documentação é servida como página estática em `/docs/`, direto pela aplicação.
 - PostgreSQL fica exposto em `localhost:5434` (mapeado nessa porta no `docker-compose.yml` para não conflitar com um Postgres local já rodando na 5432 — ajuste se quiser outra).
 
 Sem preencher as chaves de API o sistema continua funcionando normalmente (graças ao fallback das integrações), só que sem a análise real da IA, sem busca de artigos e sem envio de e-mails.
@@ -119,6 +125,9 @@ chamados-ia/
     ├── logout.php                            # encerra a sessão
     ├── esqueci_senha.php                     # solicita o link de redefinição de senha
     ├── redefinir_senha.php                   # define a nova senha a partir do token recebido
+    ├── openapi.yaml                          # symlink pra docs/openapi.yaml (serve em produção)
+    ├── docs/
+    │   └── index.html                        # Swagger UI estático, via CDN, lendo /openapi.yaml
     ├── includes/
     │   ├── header.php                        # topo comum, navegação por papel, helpers de estilo
     │   └── footer.php                        # rodapé comum, inclui os scripts JS da página

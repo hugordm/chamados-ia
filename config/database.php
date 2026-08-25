@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/env.php';
 
+date_default_timezone_set('America/Recife');
+
 function conectar_banco(): PDO
 {
     $host = getenv('DB_HOST');
@@ -16,8 +18,12 @@ function conectar_banco(): PDO
         $dsn .= ';sslmode=require';
     }
 
-    return new PDO($dsn, $user, $password, [
+    $pdo = new PDO($dsn, $user, $password, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
+
+    $pdo->exec("SET TIME ZONE 'America/Recife'");
+
+    return $pdo;
 }
