@@ -4,7 +4,10 @@ info:
   description: API de abertura e acompanhamento de chamados de suporte técnico de TI.
   version: "1.0.0"
 servers:
+  - url: https://chamados-ia.onrender.com/api
+    description: Produção (Render)
   - url: http://localhost:8080/api
+    description: Ambiente local (Docker Compose)
 security:
   - ApiKeyAuth: []
 paths:
