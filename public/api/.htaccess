@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^chamados/([0-9]+)$ chamados_id.php?id=$1 [L,QSA]

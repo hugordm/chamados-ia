@@ -1,0 +1,161 @@
+openapi: 3.0.3
+info:
+  title: Central de Chamados de TI com IA — API
+  description: API de abertura e acompanhamento de chamados de suporte técnico de TI.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /chamados:
+    get:
+      summary: Lista chamados
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Aberto, "Em Andamento", Resolvido]
+      responses:
+        "200":
+          description: Lista de chamados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Chamado"
+    post:
+      summary: Abre um novo chamado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NovoChamado"
+      responses:
+        "201":
+          description: Chamado criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chamado"
+        "422":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErroValidacao"
+  /chamados/{id}:
+    get:
+      summary: Busca um chamado pelo ID
+      parameters:
+        - $ref: "#/components/parameters/ChamadoId"
+      responses:
+        "200":
+          description: Chamado encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chamado"
+        "404":
+          description: Chamado não encontrado
+    patch:
+      summary: Atualiza o status de um chamado
+      parameters:
+        - $ref: "#/components/parameters/ChamadoId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [Aberto, "Em Andamento", Resolvido]
+              required: [status]
+      responses:
+        "200":
+          description: Chamado atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chamado"
+        "422":
+          description: Status inválido
+
+components:
+  parameters:
+    ChamadoId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas:
+    NovoChamado:
+      type: object
+      required: [solicitante, setor, titulo, descricao]
+      properties:
+        solicitante:
+          type: string
+        setor:
+          type: string
+        titulo:
+          type: string
+          maxLength: 150
+        descricao:
+          type: string
+          minLength: 10
+    Chamado:
+      type: object
+      properties:
+        id:
+          type: integer
+        solicitante:
+          type: string
+        setor:
+          type: string
+        titulo:
+          type: string
+        descricao:
+          type: string
+        categoria:
+          type: string
+        prioridade:
+          type: string
+          enum: [Baixa, Media, Alta, Urgente]
+        sugestao_ia:
+          type: string
+        status:
+          type: string
+          enum: [Aberto, "Em Andamento", Resolvido]
+        criado_em:
+          type: string
+          format: date-time
+        atualizado_em:
+          type: string
+          format: date-time
+        artigos:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArtigoSugerido"
+    ArtigoSugerido:
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        url:
+          type: string
+        resumo:
+          type: string
+    ErroValidacao:
+      type: object
+      properties:
+        erros:
+          type: array
+          items:
+            type: string

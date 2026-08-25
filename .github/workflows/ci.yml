@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: chamados_ia
+          POSTGRES_USER: chamados_ia
+          POSTGRES_PASSWORD: chamados_ia
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U chamados_ia"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_pgsql
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Load schema
+        env:
+          PGPASSWORD: chamados_ia
+        run: psql -h 127.0.0.1 -U chamados_ia -d chamados_ia -f sql/schema.sql
+
+      - name: Run tests
+        run: vendor/bin/phpunit
+
+      - name: Build Docker image
+        run: docker build -t chamados-ia:ci .
