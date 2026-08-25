@@ -35,7 +35,7 @@ function carregar_env(): void
 
 function validar_variaveis_obrigatorias(): void
 {
-    $obrigatorias = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD'];
+    $obrigatorias = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'API_KEY'];
     $faltando = [];
 
     foreach ($obrigatorias as $variavel) {

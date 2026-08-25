@@ -13,6 +13,13 @@ use App\Validation\ValidacaoException;
 
 header('Content-Type: application/json');
 
+$chave_recebida = $_SERVER['HTTP_X_API_KEY'] ?? '';
+if (!hash_equals(getenv('API_KEY'), $chave_recebida)) {
+    http_response_code(401);
+    echo json_encode(['erro' => 'Chave de API inválida ou ausente']);
+    exit;
+}
+
 $pdo = conectar_banco();
 $service = new ChamadoService(
     new ChamadoRepository($pdo),

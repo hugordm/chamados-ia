@@ -5,6 +5,8 @@ info:
   version: "1.0.0"
 servers:
   - url: http://localhost:8080/api
+security:
+  - ApiKeyAuth: []
 paths:
   /chamados:
     get:
@@ -86,6 +88,11 @@ paths:
           description: Status inválido
 
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
   parameters:
     ChamadoId:
       name: id
