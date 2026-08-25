@@ -59,10 +59,12 @@ class ChamadoRepository
     public function listar(?string $status = null): array
     {
         if ($status !== null) {
-            $stmt = $this->pdo->prepare('SELECT * FROM chamados WHERE status = :status ORDER BY criado_em DESC');
+            $stmt = $this->pdo->prepare(
+                'SELECT * FROM chamados WHERE status = :status AND arquivado_em IS NULL ORDER BY criado_em DESC'
+            );
             $stmt->execute(['status' => $status]);
         } else {
-            $stmt = $this->pdo->query('SELECT * FROM chamados ORDER BY criado_em DESC');
+            $stmt = $this->pdo->query('SELECT * FROM chamados WHERE arquivado_em IS NULL ORDER BY criado_em DESC');
         }
 
         return $stmt->fetchAll();
@@ -70,7 +72,9 @@ class ChamadoRepository
 
     public function listarPorUsuario(int $usuarioId): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM chamados WHERE usuario_id = :usuario_id ORDER BY criado_em DESC');
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM chamados WHERE usuario_id = :usuario_id AND arquivado_em IS NULL ORDER BY criado_em DESC'
+        );
         $stmt->execute(['usuario_id' => $usuarioId]);
 
         return $stmt->fetchAll();
@@ -99,6 +103,25 @@ class ChamadoRepository
             'UPDATE chamados SET status = :status, atualizado_em = NOW() WHERE id = :id'
         );
         $stmt->execute(['status' => $status, 'id' => $id]);
+    }
+
+    public function arquivar(int $id): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE chamados SET arquivado_em = NOW() WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+    }
+
+    public function desarquivar(int $id): void
+    {
+        $stmt = $this->pdo->prepare('UPDATE chamados SET arquivado_em = NULL WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+    }
+
+    public function listarArquivados(): array
+    {
+        $stmt = $this->pdo->query('SELECT * FROM chamados WHERE arquivado_em IS NOT NULL ORDER BY arquivado_em DESC');
+
+        return $stmt->fetchAll();
     }
 
     public function contarPorStatus(): array

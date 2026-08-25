@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../config/auth.php';
+require_once __DIR__ . '/../../config/helpers.php';
 
 $usuarioNav = usuario_logado();
 
@@ -50,6 +51,9 @@ function classe_status(string $status): string
                     <?php if ($usuarioNav['papel'] === 'agente'): ?>
                         <a href="/agente/usuarios.php" class="font-mono text-xs uppercase tracking-wide text-slate-500 hover:text-sky-700">
                             Funcionários
+                        </a>
+                        <a href="/agente/arquivados.php" class="font-mono text-xs uppercase tracking-wide text-slate-500 hover:text-sky-700">
+                            Arquivados
                         </a>
                     <?php endif; ?>
                     <a href="/logout.php" class="font-mono text-xs uppercase tracking-wide text-slate-500 hover:text-sky-700">

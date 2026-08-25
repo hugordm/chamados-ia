@@ -25,6 +25,12 @@ $service = new ChamadoService(
 
 $id = (int) ($_GET['id'] ?? 0);
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id > 0 && isset($_POST['arquivar'])) {
+    $service->arquivar($id);
+    header('Location: /agente/index.php');
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id > 0) {
     $service->atualizarStatus($id, $_POST['status'] ?? '');
     header('Location: /agente/chamado.php?id=' . $id);
@@ -57,7 +63,7 @@ require __DIR__ . '/../includes/header.php';
                 OS #<?= str_pad((string) $chamado['id'], 5, '0', STR_PAD_LEFT) ?>
                 · <?= htmlspecialchars($chamado['setor']) ?>
                 · <?= htmlspecialchars($chamado['solicitante']) ?>
-                · <?= htmlspecialchars($chamado['criado_em']) ?>
+                · <?= htmlspecialchars(formatar_data_hora($chamado['criado_em'])) ?>
             </div>
             <h1 class="text-2xl font-semibold mt-1"><?= htmlspecialchars($chamado['titulo']) ?></h1>
             <div class="font-mono text-xs uppercase tracking-wide text-slate-500 mt-1">
@@ -111,6 +117,14 @@ require __DIR__ . '/../includes/header.php';
             Atualizar
         </button>
     </form>
+
+    <form method="POST" id="form-arquivar" class="mt-4 flex justify-end">
+        <input type="hidden" name="arquivar" value="1">
+        <button type="submit" id="btn-arquivar"
+                class="font-mono text-xs uppercase tracking-wide border border-slate-300 text-slate-700 px-4 py-2 rounded hover:border-slate-400">
+            Arquivar chamado
+        </button>
+    </form>
 </div>
 
 <div id="modal-confirmar-status" class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/50 p-4" aria-hidden="true">
@@ -128,6 +142,28 @@ require __DIR__ . '/../includes/header.php';
                 Cancelar
             </button>
             <button type="button" id="modal-confirmar-status-confirmar"
+                    class="font-mono text-xs uppercase tracking-wide bg-sky-700 text-white px-4 py-2 rounded hover:bg-sky-800">
+                Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-confirmar-arquivar" class="hidden fixed inset-0 z-50 items-center justify-center bg-slate-900/50 p-4" aria-hidden="true">
+    <div role="dialog" aria-modal="true" aria-labelledby="modal-confirmar-arquivar-titulo"
+         class="bg-white border border-slate-200 rounded-none p-6 w-full max-w-sm">
+        <div id="modal-confirmar-arquivar-titulo" class="font-mono text-xs uppercase tracking-wide text-slate-500">
+            Confirmar Arquivamento
+        </div>
+        <p class="mt-3 text-slate-900">
+            Arquivar este chamado? Ele sai da lista principal, mas continua salvo e pode ser recuperado depois.
+        </p>
+        <div class="mt-6 flex justify-end gap-3">
+            <button type="button" id="modal-confirmar-arquivar-cancelar"
+                    class="font-mono text-xs uppercase tracking-wide border border-slate-300 text-slate-700 px-4 py-2 rounded hover:border-slate-400">
+                Cancelar
+            </button>
+            <button type="button" id="modal-confirmar-arquivar-confirmar"
                     class="font-mono text-xs uppercase tracking-wide bg-sky-700 text-white px-4 py-2 rounded hover:bg-sky-800">
                 Confirmar
             </button>

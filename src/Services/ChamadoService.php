@@ -105,6 +105,21 @@ class ChamadoService
         return $this->repository->contarPorStatus();
     }
 
+    public function arquivar(int $id): void
+    {
+        $this->repository->arquivar($id);
+    }
+
+    public function desarquivar(int $id): void
+    {
+        $this->repository->desarquivar($id);
+    }
+
+    public function listarArquivados(): array
+    {
+        return $this->repository->listarArquivados();
+    }
+
     private function notificarAbertura(array $chamado): void
     {
         $usuario = $this->buscarUsuarioDoChamado($chamado);

@@ -65,6 +65,7 @@ require __DIR__ . '/../includes/header.php';
                         OS #<?= str_pad((string) $chamado['id'], 5, '0', STR_PAD_LEFT) ?>
                         · <?= htmlspecialchars($chamado['setor']) ?>
                         · <?= htmlspecialchars($chamado['solicitante']) ?>
+                        · <?= htmlspecialchars(formatar_data_hora($chamado['criado_em'])) ?>
                     </div>
                     <div class="text-lg font-medium mt-1"><?= htmlspecialchars($chamado['titulo']) ?></div>
                     <div class="font-mono text-xs uppercase tracking-wide mt-2 <?= classe_status($chamado['status']) ?>">

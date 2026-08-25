@@ -12,9 +12,7 @@ use App\Repositories\UsuarioRepository;
 use App\Services\ChamadoService;
 
 iniciar_sessao();
-exigir_papel('cliente');
-
-$usuario = usuario_logado();
+exigir_papel('agente');
 
 $pdo = conectar_banco();
 $service = new ChamadoService(
@@ -25,38 +23,52 @@ $service = new ChamadoService(
     new EmailClient(getenv('RESEND_API_KEY'), getenv('RESEND_FROM_EMAIL'))
 );
 
-$chamados = $service->listarChamadosDoUsuario($usuario['id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = (int) ($_POST['id'] ?? 0);
+    if ($id > 0) {
+        $service->desarquivar($id);
+    }
+    header('Location: /agente/arquivados.php');
+    exit;
+}
 
-$tituloPagina = 'Meus Chamados — Central de Chamados de TI';
+$chamados = $service->listarArquivados();
+
+$tituloPagina = 'Arquivados — Central de Chamados de TI';
 require __DIR__ . '/../includes/header.php';
 ?>
 
-<h1 class="font-semibold uppercase tracking-wide text-xl mb-6">Meus Chamados</h1>
+<h1 class="font-semibold uppercase tracking-wide text-xl mb-6">Chamados Arquivados</h1>
 
 <div class="space-y-3">
     <?php if ($chamados === []): ?>
-        <p class="text-slate-500">Você ainda não abriu nenhum chamado.</p>
+        <p class="text-slate-500">Nenhum chamado arquivado.</p>
     <?php endif; ?>
 
     <?php foreach ($chamados as $chamado): ?>
-        <a href="/cliente/chamado.php?id=<?= (int) $chamado['id'] ?>"
-           class="block bg-white border border-slate-200 border-l-2 border-dashed border-l-slate-400 rounded p-4 hover:border-l-sky-700 transition">
+        <div class="bg-white border border-slate-200 border-l-2 border-dashed border-l-slate-400 rounded p-4">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <div class="font-mono text-xs uppercase tracking-wide text-slate-500">
                         OS #<?= str_pad((string) $chamado['id'], 5, '0', STR_PAD_LEFT) ?>
-                        · <?= htmlspecialchars(formatar_data_hora($chamado['criado_em'])) ?>
+                        · <?= htmlspecialchars($chamado['setor']) ?>
+                        · <?= htmlspecialchars($chamado['solicitante']) ?>
+                        · Arquivado em <?= htmlspecialchars(formatar_data_hora($chamado['arquivado_em'])) ?>
                     </div>
                     <div class="text-lg font-medium mt-1"><?= htmlspecialchars($chamado['titulo']) ?></div>
                     <div class="font-mono text-xs uppercase tracking-wide mt-2 <?= classe_status($chamado['status']) ?>">
                         <?= htmlspecialchars($chamado['status']) ?>
                     </div>
                 </div>
-                <span class="font-mono text-xs uppercase tracking-wide border-2 rounded px-2 py-1 rotate-[-4deg] <?= classe_prioridade($chamado['prioridade']) ?>">
-                    <?= htmlspecialchars($chamado['prioridade']) ?>
-                </span>
+                <form method="POST">
+                    <input type="hidden" name="id" value="<?= (int) $chamado['id'] ?>">
+                    <button type="submit"
+                            class="font-mono text-xs uppercase tracking-wide border border-slate-300 text-slate-700 px-4 py-2 rounded hover:border-slate-400">
+                        Desarquivar
+                    </button>
+                </form>
             </div>
-        </a>
+        </div>
     <?php endforeach; ?>
 </div>
 

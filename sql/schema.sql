@@ -52,3 +52,9 @@ CREATE TABLE IF NOT EXISTS tokens_redefinicao_senha (
 );
 
 CREATE INDEX IF NOT EXISTS idx_tokens_usuario ON tokens_redefinicao_senha(usuario_id);
+
+-- Um chamado arquivado é aquele com arquivado_em preenchido — nada é
+-- apagado, só deixa de aparecer nas listagens normais.
+ALTER TABLE chamados ADD COLUMN IF NOT EXISTS arquivado_em TIMESTAMP;
+
+CREATE INDEX IF NOT EXISTS idx_chamados_arquivado ON chamados(arquivado_em);

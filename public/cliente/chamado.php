@@ -51,7 +51,7 @@ require __DIR__ . '/../includes/header.php';
             <div class="font-mono text-xs uppercase tracking-wide text-slate-500">
                 OS #<?= str_pad((string) $chamado['id'], 5, '0', STR_PAD_LEFT) ?>
                 · <?= htmlspecialchars($chamado['setor']) ?>
-                · <?= htmlspecialchars($chamado['criado_em']) ?>
+                · <?= htmlspecialchars(formatar_data_hora($chamado['criado_em'])) ?>
             </div>
             <h1 class="text-2xl font-semibold mt-1"><?= htmlspecialchars($chamado['titulo']) ?></h1>
             <div class="font-mono text-xs uppercase tracking-wide text-slate-500 mt-1">

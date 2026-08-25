@@ -22,6 +22,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const formArquivar = document.getElementById('form-arquivar');
+    const modalConfirmarArquivar = document.getElementById('modal-confirmar-arquivar');
+
+    if (formArquivar && modalConfirmarArquivar) {
+        const controladorModal = criarControladorModal(modalConfirmarArquivar);
+        const botaoCancelar = document.getElementById('modal-confirmar-arquivar-cancelar');
+        const botaoConfirmar = document.getElementById('modal-confirmar-arquivar-confirmar');
+
+        formArquivar.addEventListener('submit', (evento) => {
+            evento.preventDefault();
+            controladorModal.abrir(botaoCancelar);
+        });
+
+        botaoCancelar.addEventListener('click', () => controladorModal.fechar());
+
+        botaoConfirmar.addEventListener('click', () => {
+            controladorModal.fechar();
+            formArquivar.submit();
+        });
+    }
+
     const formNovoChamado = document.getElementById('form-novo-chamado');
     if (formNovoChamado) {
         formNovoChamado.addEventListener('submit', () => {
