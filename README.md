@@ -46,6 +46,10 @@ Sistema de abertura e acompanhamento de chamados de suporte técnico interno, co
 | Documentação de API | Swagger / OpenAPI 3.0 |
 | Testes | PHPUnit |
 | CI/CD | GitHub Actions |
+| Banco de dados (produção) | Neon (PostgreSQL gerenciado, serverless) |
+| Hospedagem (produção) | Render (deploy via Docker, a partir do `Dockerfile` do próprio repositório) |
+
+Desenvolvimento local usa o PostgreSQL do Docker Compose; produção usa o Neon — são dois bancos diferentes, não a mesma instância.
 
 ## Como rodar localmente
 
