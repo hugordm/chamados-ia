@@ -2,3 +2,8 @@
 vendor/
 .phpunit.result.cache
 *.log
+
+# Documentos de planejamento (uso interno, não vão pro repositório)
+ESPECIFICACAO_PROJETO.md
+ADENDO_*.md
+PROMPT_*.md
